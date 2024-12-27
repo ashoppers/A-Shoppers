@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ashoppers.com</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: relative;
+        }
+        header .logo {
+            width: 600px;
+            height: 250px;
+            border-radius: 50px;
+            margin-bottom: 10px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        header p {
+            font-size: 14px;
+            font-style: italic;
+            margin: 5px 0 10px;
+        }
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            background-color: #444;
+            padding: 10px 0;
+        }
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+        }
+        .top-nav a:hover {
+            text-decoration: underline;
+        }
+        .search-bar {
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .categories {
+            margin: 20px;
+            text-align: center;
+        }
+        .categories h4 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        .categories a {
+            display: block;
+            font-size: 18px;
+            color: #007bff;
+            text-decoration: none;
+            margin: 5px 0;
+        }
+        .categories a:hover {
+            text-decoration: underline;
+        }
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .product {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+        .product img {
+            width: 100%;
+            height: 200px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .product img:hover{
+            transform: scale(1.05);
+        }
+        .product .details {
+            padding: 10px;
+        }
+        .product .details .price {
+            font-size: 18px;
+            color: #333;
+        }
+        .product .details .order {
+            margin-top: 10px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .product .details .order:hover {
+            background-color: #218838;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+        footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .modal .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="images/logo.png" alt="A Shoppers Logo" class="logo">
+        <h1>A Shoppers - Kanungu</h1>
+        <p>Get the Best Shopping Experience With Us</p>
+    </header>
+    
+    <div class="top-nav">
+        <a href="#">Home</a>
+        <a href="#about-us">About Us</a>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Search for products...">
+    </div>
+
+    <div class="categories">
+        <h4>Categories of Our Products</h4>
+        <a href="#" class="category-link" data-category="phones">Phones</a>
+        <a href="#" class="category-link" data-category="kitchen">Kitchen Ware</a>
+        <a href="#" class="category-link" data-category="other">Other Products</a>
+    </div>
+
+    <div class="products">
+        <!-- Product items will dynamically update based on category or search -->
+    </div>
+
+    <section id="about-us">
+        <h3>About Us</h3>
+        <p>This is an online shopping business operating in Kanungu District-Uganda. We deliver ordered products to your area, and you can confirm functionality before payment. Payments are made upon delivery for security reasons. Contact the business owner via 0763207732 for services like marketing websites for businesses or institutions.</p>
+    </section>
+
+    <footer>
+        <p>Contact the Business Owner: Atusinguza Anselem, A Software Engineer. via 0763207732 | Email: ashoppers932@gmail.com</p>
+        <p>Instagram: <a href="https://www.instagram.com/ashop.pers">A Shoppers</a></p>
+        <p>&copy; 2024 A Shoppers - Kanungu. All rights reserved.</p>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="imageModal">
+        <span class="close" id="modalClose">&times;</span>
+        <img id="modalImage" src="" alt="Fullscreen Image">
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('search');
+        const categoryLinks = document.querySelectorAll('.category-link');
+        const productsContainer = document.querySelector('.products');
+
+        const productsData = {
+            phones: [
+                { name: "mi one cellphone at UGX 38,500", image: "images/phones/mi one 29k.jpg", price: "mi one cellphone<p> UGX 38,500" },
+                { name: "Oale Smartphone at UGX 250,000", image: "images/phones/Oale 190k.jpg", price: "Oale Smartphone <p> UGX 250,000" },
+                { name: "SIMI C1 4G Smartphone at UGX 375,999", image: "images/phones/SIMI C1 4G 300k.jpg", price: "SIMI C1 4G Smartphone<p> UGX 375,999" },
+                { name: "Tecno T258 Cellphone at UGX 77,999 ", image: "images/phones/Tecno T258 56k.jpg", price: "Tecno T258 Cellphone<p> UGX 77,999" },
+                { name: "Villaon V20  Smartphone at UGX 235,000", image: "images/phones/Villaon V20 170k.jpg", price: "Villaon V20 Smartphone<p> UGX 235,000" },
+                { name: "Infinix Smart 8 - 6.6  2GB RAM 64GB ROM 13MP 5000mAh at UGX 350,000 ", image: "images/phones/Infinix Smart 8 - 6.6  2GB RAM 64GB ROM 13MP 5000mAh 310k.jpg", price: "Infinix Smart 8 - 6.6  2GB RAM 64GB ROM 13MP 5000mAh<p>UGX 350,000" },
+                { name: "Itel A50 - 6.6  6GB (2+4) RAM 64GB ROM 8MP 5000mAh at UGX 310,000", image: "images/phones/Itel A50 - 6.6  6GB (2+4) RAM 64GB ROM 8MP 5000mAh 280k.jpg", price: "Itel A50 - 6.6  6GB (2+4) RAM 64GB ROM 8MP 5000mAh<p>UGX 310,000 " },
+                { name: "Itel A70 -  8GB (3+5GB) RAM 128GB ROM 13MP 5000mAh at UGX 315,000 ", image: "images/phones/Itel A70 -  8GB (3+5GB) RAM 128GB ROM 13MP 5000mAh 280k.jpg", price: "Itel A70 -  8GB (3+5GB) RAM 128GB ROM 13MP 5000mAh<p>UGX 315,000" },
+                { name: "Itel Flip 1 2.4' 1200mAh 8MB+8MB Fold CellPhone at UGX 120,000", image: "images/phones/Itel Flip 1 2.4' 1200mAh 8MB+8MB Fold Phone 100k.jpg", price: "Itel Flip 1 2.4' 1200mAh 8MB+8MB Fold CellPhone<p>UGX 120,000" },
+                { name: "Itel S24 - 6.6 8GB (4+4GB) RAM 128GB ROM at UGX 380,000 ", image: "images/phones/Itel S24 - 6.6 8GB (4+4GB) RAM 128GB ROM 340k.jpg", price: "Itel S24 - 6.6 8GB (4+4GB) RAM 128GB ROM <p>UGX 380,000" },
+                { name: "Mbo 16A Pro 4G - 6.6  12GB RAM 128GB ROM 21MP 6000mAh at UGX 340,000", image: "images/phones/Mbo 16A Pro 4G - 6.6  12GB RAM 128GB ROM 21MP 6000mAh300k.jpg", price: "Mbo 16A Pro 4G - 6.6  12GB RAM 128GB ROM 21MP 6000mAh<p>UGX 340,000" },
+                { name: "Nokia 105 DS 1.8'' Dual Sim at UGX 60,000", image: "images/phones/Nokia 105 DS 1.8'' Dual Sim 47k.jpg", price: "Nokia 105 DS 1.8'' Dual Sim<p> UGX 60,000" },
+                { name: "Nokia 2720 Flip 4G 2.8inch Dual-core 2MP 4MB at UGX 150,000", image: "images/phones/Nokia 2720 Flip 4G 2.8inch Dual-core 2MP 4MB 125k.jpg", price: "Nokia 2720 Flip 4G 2.8inch Dual-core 2MP 4MB<p> UGX 150,000" },
+                { name: "Nokia Refurbished 5310  RAM-16MB ROM 0.2MP Dual SIM at UGX 120,000", image: "images/phones/Nokia Refurbished 5310  RAM-16MB ROM 0.2MP Dual SIM 95k.jpg", price: "Nokia Refurbished 5310  RAM-16MB ROM 0.2MP Dual SIM<p>UGX 120,000 " },
+                { name: "Samsung Galaxy A05 - 6.7  4GB RAM 64GB ROM 50MP 5000Amh at UGX 410,000", image: "images/phones/Samsung Galaxy A05 - 6.7  4GB RAM 64GB ROM 50MP 5000Amh 380k.jpg", price: "Samsung Galaxy A05 - 6.7  4GB RAM 64GB ROM 50MP 5000Amh<p>UGX 410,000" },
+                { name: "SIMI S502 - 5. HD + 1GB And 16GB at UGX 205,000", image: "images/phones/SIMI S502 - 5. HD + 1GB And 16GB 180k.jpg", price: "SIMI S502 - 5. HD + 1GB And 16GB<p> UGX 205,000" },
+                { name: "Tecno Pop 8 - 6.6 2GB RAM 64GB ROM 13MP 5000mAh at UGX 310,000", image: "images/phones/Tecno Pop 8 - 6.6 2GB RAM 64GB ROM 13MP 5000mAh 280k.jpg", price: "Tecno Pop 8 - 6.6 2GB RAM 64GB ROM 13MP 5000mAh<p> UGX 310,000" },
+                { name: "Tecno POP8-BG6(64+3)-WHITE-64GB-DUAL-SIM at UGX 395,000", image: "images/phones/Tecno POP8-BG6(64+3)-WHITE-64GB-DUAL-SIM 370k.jpg", price: "Tecno POP8-BG6(64+3)-WHITE-64GB-DUAL-SIM at UGX 395,000" },
+                { name: "Tecno Spark 10C 6.6  8GB RAM 128GB ROM 50MP 5000mAh at UGX 505,000", image: "images/phones/Tecno Spark 10C 6.6  8GB RAM 128GB ROM 50MP 5000mAh 470k.jpg", price: "Tecno Spark 10C 6.6  8GB RAM 128GB ROM 50MP 5000mAh<p>UGX 505,000" },
+                { name: "Tecno Spark 30C 4GB RAM 128GB ROM at UGX 480,000", image: "images/phones/Tecno Spark 30C 4GB RAM 128GB ROM 450k.jpg", price: "Tecno Spark 30C 4GB RAM 128GB ROM<p> UGX 480,000" },
+                { name: "VILLAON V20SE 5.0'' 2GB RAM 32GB ROM 5MP 3000mAh at UGX 230,000 ", image: "images/phones/VILLAON V20SE 5.0'' 2GB RAM 32GB ROM 5MP 3000mAh 195k.jpg", price: "VILLAON V20SE 5.0'' 2GB RAM 32GB ROM 5MP 3000mAh <p>UGX 230,000" },
+                { name: "ZTE Nubia Blade A35 6.75 5000mAh 12GB RAM 64GB ROM at UGX 310,000", image: "images/phones/ZTE Nubia Blade A35 6.75 5000mAh 12GB RAM 64GB ROM 280k.jpg", price: "ZTE Nubia Blade A35 6.75 5000mAh 12GB RAM 64GB ROM <p>UGX 310,000" },
+
+                
+            ],
+            kitchen: [
+                { name: "Pearlight Electric Kettle at UGX 60,000", image: "images/kitchen ware/Pearlight Kettle 42k.jpg", price: "Pearlight Electric Kettle<p> UGX 60,000" },
+                { name: "Pearlight Pacolator at UGX 40,000", image: "images/kitchen ware/Pearlight Pacolator 28k.jpg", price: "Pearlight Pacolator<p>UGX 40,000" },
+                { name: "Rechargable Portable blender at UGX 34,500", image: "images/kitchen ware/Rechargable Portable blender 24k.jpg", price: "Rechargable Portable blender<p>UGX 34,500" },
+                { name: "Saachi 2L Electric kettle at UGX 36,000", image: "images/kitchen ware/Saachi 2L kettle 28k.jpg", price: "Saachi 2L Electric kettle <p> UGX 36,000" },
+                { name: "5 pack of dishes at UGX 120,000", image: "images/kitchen ware/5 pack of dishes 100k.jpg", price: "5 pack of dishes <p> UGX 120,000" },
+                { name: "12 pack wooden steel knives at UGX 70,000", image: "images/kitchen ware/12 pack wooden steel knives 59k.jpg", price: "12 pack wooden steel knives <p> UGX 70,000" },
+                { name: "feng steel kitchen knives at UGX 25,000", image: "images/kitchen ware/17k feng steel kitchen knives.jpg", price: " feng steel kitchen knives <p> UGX 25,000" },
+                { name: "Digital flask at 45,000", image: "images/kitchen ware/Digital flask 35k.jpg", price: "Digital flask <p> UGX 45,000" },
+                { name: "set 26 plus the board at UGX 40,000", image: "images/kitchen ware/set 26 plus the board.jpg", price: "set 26 plus the board <p> UGX 40,000" },
+                { name: "set spoons at UGX 30,000", image: "images/kitchen ware/set spoons 17k.jpg", price: "Set of spoons  <p> UGX 30,000" },
+
+                
+            ],
+            other: [
+                { name: "64GB Memory Card at UGX 35,000", image: "images/other products/64gb MC 20k.jpg", price: "64GB Memory Card <p> UGX 35,000" },
+                { name: "128GB Flash at UGX 30,000", image: "images/other products/128gb flash 18k.jpg", price: "128GB Flash <p>UGX 30,000" },
+                { name: "Ace PowerBank at UGX 44,000 ", image: "images/other products/Ace PowerBank 23k.jpg", price: "Ace PowerBank<p>UGX 44,000" },
+                { name: "Fashion bluetoth headsets at UGX 35,000", image: "images/other products/fashion bluetoth headsets 20k.jpg", price: "Fashion bluetoth headsets <p>UGX 35,000" },
+                { name: "One left piece Headset at UGX 20,000", image: "images/other products/one piece bud 10k.jpg", price: "One left piece Headset<p>UGX 20,000" },
+                { name: "p9 headsets at UGX 40,000", image: "images/other products/p9 headsets 25k.jpg", price: "P9 headsets <p>UGX 40,000" },
+                { name: "Power Bank at UGX 40,000", image: "images/other products/Power Bank 26k.jpg", price: "Power Bank <p>UGX 40,000" },
+                { name: "20+ Power Bank at UGX 55,000", image: "images/other products/20+ Power Bank 38k.jpg", price: "20+ Power Bank <p>UGX 55,000" },
+                { name: "Pro 4 TWS Pods at UGX 25,000 ", image: "images/other products/Pro 4 TWS Pods 12k.jpg", price: "Pro 4 TWS Pods <p>UGX 25,000" },
+                { name: "Smart pods at UGX 35,000", image: "images/other products/Smart pods 20k.jpg", price: "Smart pods <p>UGX 35,000" },
+                { name: "Ultra Smartwatch at UGX 45,000", image: "images/other products/Smartwatch 30k.jpg", price: "Ultra Smartwatch <p>UGX 45,000" },
+                { name: "Tilech Ear pods at UGX 27,000", image: "images/other products/Tilech pods 15k.jpg", price: "Tilech Ear pods <p>UGX 27,000" },
+                { name: "women Smartwatch at UGX 40,000", image: "images/other products/women Smartwatch 20k.jpg", price: "Women Smartwatch<p>UGX 40,000" },
+                { name: "Electric Flat iron  at UGX 48,900", image: "images/other products/flat iron 35k.jpg", price: "Electric Flat iron  <p>UGX 48,900" },
+                { name: "Ladies delicate casual temperament watch strap at UGX 35,000 ", image: "images/other products/Ladies delicate casual temperament watch strap 16k.jpg", price: "Ladies delicate casual temperament watch strap <p>UGX 35,000" },
+                { name: "Ladies Sling Bag Small Crossbody at UGX 38,000", image: "images/other products/Ladies Sling Bag Small Crossbody25k.jpg", price: "Ladies Sling Bag Small Crossbody<p>UGX 38,000" },
+                { name: "Ladies Star Sky Dial PU Leather Belt Quartz Wrist at UGX 30,000 ", image: "images/other products/Ladies Star Sky Dial PU Leather Belt Quartz Wrist Watches 12k.jpg", price: "Ladies Star Sky Dial PU Leather Belt Quartz Wrist Watches<p>UGX 30,000" },
+                { name: "Men's Brogues Oxford Wedding Party Loafers at UGX 65,000", image: "images/other products/Men's Brogues Oxford Wedding Party Loafers & Slip-Ons Shoes Vintage Brown 45k.jpg", price: "Men's Brogues Oxford Wedding Party Loafers<p>UGX 65,000" },
+                { name: "Men's Brogues Oxford Shoes Vintage Brown at UGX 105,000 ", image: "images/other products/Men's Brogues Oxford Wedding Party Loafers & Slip-Ons Shoes Vintage Brown 80k.jpg", price: "Men's Brogues Oxford Shoes Vintage Brown<p>UGX 105,000" },
+                { name: "Men's Classic Business Watch Casual Light Luxury at UGX 79,000", image: "images/other products/Men's Classic Business Watch Casual Light Luxury 58k.jpg", price: "Men's Classic Business Watch Casual Light Luxury<p>UGX 79,000" },
+                { name: "ped from abroad at UGX50,000 ", image: "images/other products/ped from abroad 38k.jpg", price: "ped from abroad <p>UGX 50,000" },
+                { name: "Water Proof Men's Digital And Analog Watch at UGX 70,000 ", image: "images/other products/Water Proof Men's Digital And Analog Watch  58k.jpg", price: "Water Proof Men's Digital And Analog Watch<p>UGX 70,000" },
+                { name: "Yellow Mini Portable Handheld Fan - USB Rechargeable at UGX.35,000", image: "images/other products/Yellow Mini Portable Handheld Fan - USB Rechargeable 25k.jpg", price: "Yellow Mini Portable Handheld Fan - USB Rechargeable<p>UGX 35,000" },
+                { name: "DELL Latitude 11 Inch 3190 4GB RAM 128GB SSD Refurbished at UGX 450,000 ", image: "images/other products/DELL Latitude 11 Inch 3190 4GB RAM 128GB SSD Refurbished 370k.jpg", price: "DELL Latitude 11 Inch 3190 4GB RAM 128GB SSD Refurbished<p>UGX 450,000" },
+                { name: "DELL Refurbished 3190,Pentium,4GB RAM,128GB at UGX 600,000 ", image: "images/other products/DELL Refurbished 3190,Pentium,4GB RAM,128GB 560k.jpg", price: "DELL Refurbished 3190,Pentium,4GB RAM,128GB<p>UGX 600,000" },
+                { name: "Hp Refurbished HP Probook 640 I5 8GB Ram 500GB HDD 14 Plus Bag-Black at UGX 650,000 ", image: "images/other products/Hp Refurbished HP Probook 640 I5 8GB Ram 500GB HDD 14 Plus Bag-Black 590k.jpg", price: "Hp Refurbished HP Probook 640 I5 8GB Ram 500GB HDD 14 Plus Bag-Black <p>UGX 650,000" },
+                { name: "Jbl Charge 5 Portable bluetooth Speaker at UGX 610,000", image: "images/other products/Jbl Charge 5 Portable bluetooth Speaker 550k.jpg", price: "Jbl Charge 5 Portable bluetooth Speaker<p>UGX 610,000" },
+                { name: "Jbl Flip 6 Portable Waterproof Wireless Bluetooth Speaker at UGX 450,000", image: "images/other products/Jbl Flip 6 Portable Waterproof Wireless Bluetooth Speaker 390k.jpg", price: "Jbl Flip 6 Portable Waterproof Wireless Bluetooth Speaker<p>UGX 450,000" },
+                { name: "Jbl Go 3 Portable Speaker With Bluetooth, Built-in Battery, Waterproof Dustproof Feature at UGX 240,000 ", image: "images/other products/Jbl Go 3 Portable Speaker With Bluetooth, Built-in Battery, Waterproof Dustproof Feature 190k.jpg", price: "Jbl Go 3 Portable Speaker With Bluetooth, Built-in Battery <p>UGX 240,000" },
+                    
+                    
+            ],
+        };
+
+        const displayProducts = (category) => {
+            productsContainer.innerHTML = '';
+            (productsData[category] || []).forEach(product => {
+                productsContainer.innerHTML += `
+                    <div class="product">
+                        <img src="${product.image}" alt="${product.name}">
+                        <div class="details">
+                            <p class="price">${product.price}</p>
+                           <a href="https://wa.me/256763207732?text=Your%20order%20for%20the%20${product.name}has%20been%20confirmed, %20share%20with%20us%20your%20area%20where%20to%20deliver%20it.%20We%20shall%20then%20be%20able%20to%20notify%20you%20where%20and%20when%20you%20collect%20your%20product.%20Payments%20are%20made%20on%20delivery%20for%20security%20reasons.%20Thank%20You%20for%20shopping%20with%20“A Shoppers”%20"class="order">Order</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Add click event for fullscreen functionality
+            document.querySelectorAll('.product img').forEach(img => {
+                img.addEventListener('click', () => {
+                    const modal = document.getElementById('imageModal');
+                    const modalImage = document.getElementById('modalImage');
+                    modal.style.display = 'flex';
+                    modalImage.src = img.src;
+                });
+            });
+        };
+
+        searchInput.addEventListener('input', (e) => {
+            const searchValue = e.target.value.toLowerCase();
+            productsContainer.innerHTML = '';
+            Object.values(productsData).flat().forEach(product => {
+                if (product.name.toLowerCase().includes(searchValue)) {
+                    productsContainer.innerHTML += `
+                        <div class="product">
+                            <img src="${product.image}" alt="${product.name}">
+                            <div class="details">
+                                <p class="price">${product.price}</p>
+                                <a href="https://wa.me/256763207732?text=I%20want%20to%20order%20${product.name}" class="order">Order</a>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        });
+
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = link.getAttribute('data-category');
+                if (category === 'other') {
+                    displayProducts('phones');
+                    displayProducts('kitchen');
+                    displayProducts('other');
+                } else {
+                    displayProducts(category);
+                }
+            });
+        });
+
+        // Load all products by default
+        displayProducts('phones');
+        displayProducts('kitchen');
+        displayProducts('other');
+
+        // Close modal
+        const modal = document.getElementById('imageModal');
+        const modalClose = document.getElementById('modalClose');
+        modalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+
